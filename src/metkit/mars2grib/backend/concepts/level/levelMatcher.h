@@ -110,16 +110,16 @@ inline std::size_t matchSFC(const long param) {
                  range(162100, 162113), 200199, range(210186, 210191), range(210198, 210202), range(210260, 210264),
                  range(222001, 222256), 228002, 228003, 228012, range(228015, 228022), 228024, 228026, 228027, 228032,
                  228035, 228036, range(228046, 228048), 228051, 228053, range(228057, 228060), 228129, 228130, 228141,
-                 228143, 228144, range(228216, 228228), 228251, 229001, 229007, range(231001, 231003), 231005, 231010, 231012,
-                 231057, 231058, range(233000, 233031), 235020, 235021, range(235029, 235031), range(235033, 235038),
-                 range(235041, 235043), 235048, 235051, 235052, 235055, 235058, range(235078, 235080), 235083, 235084,
-                 235093, 235134, 235159, 235189, 235263, 235283, 235339, 237013, 237041, 237042, 237055, 237078, 237080,
-                 237083, 237084, 237093, 237117, 237134, 237159, 237263, 237321, 238013, 238041, 238042, 238055, 238078,
-                 238080, 238083, 238084, 238093, 238134, 238159, 238263, 239041, 239042, 239078, 239080, 239083, 239084,
-                 239093, 239134, 239159, 239263, 260004, 260005, 260015, 260038, 260048, 260109, 260121, 260123, 260255,
-                 260259, 260289, 260292, 260293, range(260318, 260321), 260338, 260339, 260509, 260682, 260683, 260688,
-                 261001, 261002, range(261014, 261016), 261018, 261023, 262000, 262100, 262124, 262139, 262140,
-                 262144)) {
+                 228143, 228144, range(228216, 228228), 228251, 229001, 229007, range(231001, 231003), 231005, 231010,
+                 231012, 231057, 231058, range(233000, 233031), 235020, 235021, range(235029, 235031),
+                 range(235033, 235038), range(235041, 235043), 235048, 235051, 235052, 235055, 235058,
+                 range(235078, 235080), 235083, 235084, 235093, 235134, 235159, 235189, 235263, 235283, 235339, 237013,
+                 237041, 237042, 237055, 237078, 237080, 237083, 237084, 237093, 237117, 237134, 237159, 237263, 237321,
+                 238013, 238041, 238042, 238055, 238078, 238080, 238083, 238084, 238093, 238134, 238159, 238263, 239041,
+                 239042, 239078, 239080, 239083, 239084, 239093, 239134, 239159, 239263, 260004, 260005, 260015, 260038,
+                 260048, 260109, 260121, 260123, 260255, 260259, 260289, 260292, 260293, range(260318, 260321), 260338,
+                 260339, 260509, 260682, 260683, 260688, 261001, 261002, range(261014, 261016), 261018, 261023, 262000,
+                 262100, 262124, 262139, 262140, 262144)) {
         return static_cast<std::size_t>(LevelType::Surface);
     }
     if (matchAny(param, 228045, 235322, 237322, 238322, 239322)) {
@@ -132,7 +132,7 @@ inline std::size_t matchSFC(const long param) {
     }
 
     // Chemical
-    if (matchAny(param, range(228080, 228085), range(233032, 233035), range(235062, 235064))) {
+    if (matchAny(param, range(228080, 228085), range(233032, 233035), range(235062, 235064), range(400000, 499999))) {
         return static_cast<std::size_t>(LevelType::Surface);
     }
 
@@ -163,7 +163,7 @@ inline std::size_t matchML(const long param) {
     using metkit::mars2grib::util::param_matcher::range;
 
     if (matchAny(param, range(21, 23), range(75, 77), range(129, 133), 135, 138, 152, range(155, 157), 203,
-                 range(246, 248), range(162100, 162113), 260290, 260292, 260293)) {
+                 range(246, 248), range(162100, 162113), 260290, 260292, 260293, range(400000, 499999))) {
         return static_cast<std::size_t>(LevelType::Hybrid);
     }
 
@@ -176,7 +176,8 @@ inline std::size_t matchPL(const long param, const long level) {
     using metkit::mars2grib::util::param_matcher::range;
 
     if (matchAny(param, 1, 2, 10, 60, 75, 76, range(129, 135), 138, 152, range(155, 157), 203, range(246, 248), 235100,
-                 range(235129, 235133), 235135, 235138, 235152, 235155, 235157, 235203, 235246, 260290, 263107)) {
+                 range(235129, 235133), 235135, 235138, 235152, 235155, 235157, 235203, 235246, 260290, 263107,
+                 range(400000, 499999))) {
         if (level >= 100) {
             return static_cast<std::size_t>(LevelType::IsobaricInHpa);
         }
@@ -189,11 +190,24 @@ inline std::size_t matchPL(const long param, const long level) {
         "No mapping exists for param \"" + std::to_string(param) + "\" on levtype PL", Here());
 }
 
+inline std::size_t matchFL(const long param) {
+    using metkit::mars2grib::util::param_matcher::matchAny;
+    using metkit::mars2grib::util::param_matcher::range;
+
+    if (matchAny(param, 260290)) {
+        return static_cast<std::size_t>(LevelType::FlightLevel);
+    }
+
+    throw utils::exceptions::Mars2GribMatcherException(
+        "No mapping exists for param \"" + std::to_string(param) + "\" on levtype FL", Here());
+}
+
 inline std::size_t matchPT(const long param) {
     using metkit::mars2grib::util::param_matcher::matchAny;
     using metkit::mars2grib::util::param_matcher::range;
 
-    if (matchAny(param, 53, 54, 60, range(131, 133), 138, 155, 203, 235100, 235203, 237203, 238203, 239203)) {
+    if (matchAny(param, 53, 54, 60, range(131, 133), 138, 155, 203, 235100, 235203, 237203, 238203, 239203,
+                 range(400000, 499999))) {
         return static_cast<std::size_t>(LevelType::Theta);
     }
 
@@ -206,7 +220,7 @@ inline std::size_t matchPV(const long param) {
     using metkit::mars2grib::util::param_matcher::matchAny;
     using metkit::mars2grib::util::param_matcher::range;
 
-    if (matchAny(param, 3, 54, 129, range(131, 133), 203, 235098, 235269)) {
+    if (matchAny(param, 3, 54, 129, range(131, 133), 203, 235098, 235269, range(400000, 499999))) {
         return static_cast<std::size_t>(LevelType::PotentialVorticity);
     }
 
@@ -331,6 +345,9 @@ std::size_t levelMatcher(const MarsDict_t& mars, const OptDict_t& opt) {
     if (levtype == "pl") {
         const auto level = get_or_throw<long>(mars, "levelist");
         return impl::matchPL(param, level);
+    }
+    if (levtype == "fl") {
+        return impl::matchFL(param);
     }
     if (levtype == "pt") {
         return impl::matchPT(param);
