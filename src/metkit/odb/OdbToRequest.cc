@@ -66,12 +66,13 @@ std::vector<MarsRequest> OdbToRequest::odbToRequest(DataHandle& dh) const {
     std::vector<MarsRequest> requests;
 
     while ((frame = reader.next())) {
-        Span span = frame.span(OdbMetadataDecoder::columnNames(), onlyConstantColumns_);
+        Span span = frame.span(OdbMetadataDecoder::columnNames(frame), onlyConstantColumns_);
 
         MarsRequest r(verb_);
         MarsRequestSetter setter(r);
         OdbMetadataDecoder decoder(setter, {}, verb_);
         span.visit(decoder);
+        decoder.finalize();
 
         if (one_ and requests.size()) {
             requests.back().merge(r);

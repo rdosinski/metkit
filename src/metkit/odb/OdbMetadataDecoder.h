@@ -14,6 +14,11 @@
 #ifndef metkit_OdbMetadataDecoder_h
 #define metkit_OdbMetadataDecoder_h
 
+#include <functional>
+#include <map>
+#include <set>
+#include <string>
+
 #include "eckit/message/Message.h"
 
 #include "metkit/mars/MarsLanguage.h"
@@ -40,18 +45,27 @@ public:
     virtual void operator()(const std::string& columnName, const std::set<double>& vals);
     virtual void operator()(const std::string& columnName, const std::set<std::string>& vals);
 
+    void finalize();
+
     static const std::vector<std::string>& columnNames();
+    static std::vector<std::string> columnNames(const odc::api::Frame& frame);
 
 private:  // methods
 
     template <typename T>
     void visit(const std::string& columnName, const std::set<T>& vals, const metkit::mars::MarsLanguage& language);
 
+    template <typename T>
+    void visitOrDefer(const std::string& columnName, const std::set<T>& vals);
+
 private:  // members
 
     metkit::mars::MarsLanguage language_;
     eckit::message::MetadataGatherer& gather_;
     eckit::message::GetMetadataOptions options_;
+
+    std::map<std::string, std::set<std::string>> keywordValues_;  ///< Decoded MARS values seen per keyword
+    std::map<std::string, std::function<void()>> deferred_;  ///< Pending conditional columns
 };
 
 

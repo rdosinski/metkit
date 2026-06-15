@@ -7,3 +7,7 @@ OBSGROUP: groupid@hdr
 REPORTYPE: reportype
 STREAM: stream
 EXPVER: expver
+stream_conditional:
+  xwda:
+    ANOFFSET: anoffset
+    OBSCUTOFF: obscutoff
